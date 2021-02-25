@@ -47,12 +47,6 @@ define Package/xray-example
   PKGARCH:=all
 endef
 
-define Package/xray-geodata
-  $(call Package/xray/template)
-  TITLE+= (geodata files)
-  DEPENDS:=xray-core
-  PKGARCH:=all
-endef
 
 define Package/xray/description
   Xray, Penetrates Everything. Also the best v2ray-core, with XTLS support. Fully compatible configuration.
@@ -69,44 +63,12 @@ define Package/xray-example/description
   This includes example configuration files for xray-core.
 endef
 
-define Package/xray-geodata/description
-  $(call Package/xray/description)
-
-  This includes GEO datas used for xray-core.
-endef
 
 define Package/xray-core/conffiles
 /etc/xray/
 /etc/config/xray
 endef
 
-GEOIP_VER:=202102112209
-GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
-
-define Download/geoip
-  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
-  URL_FILE:=geoip.dat
-  FILE:=$(GEOIP_FILE)
-  HASH:=acce62bcb45e9cb832c02da5e2d7b5d615fc7b5f4771c6356a406e1449f5673f
-endef
-
-GEOSITE_VER:=202102112209
-GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
-
-define Download/geosite
-  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOSITE_VER)/
-  URL_FILE:=geosite.dat
-  FILE:=$(GEOSITE_FILE)
-  HASH:=c4071fd268ab38d3b09ebf8dbbcb82c4ab8833ecdab991b40b57b75da47e536e
-endef
-
-define Build/Prepare
-	$(call Build/Prepare/Default)
-ifneq ($(CONFIG_PACKAGE_xray-geodata),)
-	$(call Download,geoip)
-	$(call Download,geosite)
-endif
-endef
 
 define Package/xray-core/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
@@ -132,12 +94,6 @@ define Package/xray-example/install
 	$(INSTALL_CONF) $(CURDIR)/files/vpoint_vmess_freedom.json $(1)/etc/xray/
 endef
 
-define Package/xray-geodata/install
-	$(INSTALL_DIR) $(1)/usr/share/xray/
-	$(INSTALL_DATA) $(DL_DIR)/$(GEOIP_FILE) $(1)/usr/share/xray/geoip.dat
-	$(INSTALL_DATA) $(DL_DIR)/$(GEOSITE_FILE) $(1)/usr/share/xray/geosite.dat
-endef
-
 $(eval $(call BuildPackage,xray-core))
 $(eval $(call BuildPackage,xray-example))
-$(eval $(call BuildPackage,xray-geodata))
+
